@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using YANF.Script;
+using static Loto.Script.Constant;
 
 namespace Loto.Screen
 {
@@ -19,7 +20,7 @@ namespace Loto.Screen
                 nud.Enter += Nud_Enter;
             }
             // option
-            btnRun.Select();
+            btnGes.Select();
         }
         #endregion
 
@@ -27,47 +28,82 @@ namespace Loto.Screen
         // frm shown
         private void FrmMain_Shown(object sender, EventArgs e) => this.FadeIn();
 
-        // btn Run click
-        private void BtnRun_Click(object sender, EventArgs e)
+        // btn guess click
+        private void BtnGes_Click(object sender, EventArgs e)
         {
             var rnd = new Random();
             // num up-down head
-            var heads = new List<int>();
-            _nbHeads.ForEach(x => heads.Add((int)x.Value));
-            // num up-down tail
-            var tails = new List<int>();
-            _nbTails.ForEach(x => tails.Add((int)x.Value));
-            // random head
             var numHeads = new List<int>();
-            var sum = 0;
-            heads.ForEach(x =>
-            {
-                sum += x;
-                numHeads.Add(sum);
-            });
-            // random tail
+            _nbHeads.ForEach(x => numHeads.Add((int)x.Value));
+            // num up-down tail
             var numTails = new List<int>();
-            sum = 0;
-            tails.ForEach(x =>
+            _nbTails.ForEach(x => numTails.Add((int)x.Value));
+            // random head size
+            var heads = new List<int>();
+            var sum = 0;
+            numHeads.ForEach(x =>
             {
                 sum += x;
-                numTails.Add(sum);
+                heads.Add(sum);
             });
-            // running
-            var rslt = string.Empty;
-            var rslts = new List<string>();
-        ChkPt:
-            rslt = $"{numHeads.IndexOf(numHeads.First(x => x > rnd.Next(sum)))}{numTails.IndexOf(numTails.First(x => x > rnd.Next(sum)))}";
-            if (!rslts.Contains(rslt))
+            // random tail size
+            var tails = new List<int>();
+            sum = 0;
+            numTails.ForEach(x =>
             {
-                rslts.Add(rslt);
-                goto ChkPt;
+                sum += x;
+                tails.Add(sum);
+            });
+            // spin
+            var cpls = new List<string>();
+            for (var i = 0; i < RND_SIZE; i++)
+            {
+                var numHead = heads.IndexOf(heads.First(x => x > rnd.Next(sum)));
+                numHeads[numHead] = numHeads[numHead]++;
+                var numTail = tails.IndexOf(tails.First(x => x > rnd.Next(sum)));
+                numTails[numTail] = numTails[numTail]++;
+                cpls.Add($"{numHead}{numTail}");
+            }
+            // get top
+            var cpl = string.Empty;
+            var topCpl = cpls.GroupBy(x => x).OrderByDescending(g => g.Count()).SelectMany(y => y).ToList();
+            if (topCpl.Count > 0)
+            {
+                cpl = topCpl[0];
+            }
+            else
+            {
+            ChkPtGes:
+                var numHead = heads.IndexOf(heads.First(x => x > rnd.Next(sum)));
+                numHeads[numHead] = numHeads[numHead]++;
+                var numTail = tails.IndexOf(tails.First(x => x > rnd.Next(sum)));
+                numTails[numTail] = numTails[numTail]++;
+                cpl = $"{numHead}{numTail}";
+                if (!cpls.Contains(cpl))
+                {
+                    cpls.Add(cpl);
+                    goto ChkPtGes;
+                }
             }
             // display
             lblArDown.Visible = true;
-            lblRslt.Text = rslt;
-            lblNumUp.Text = $"{heads.IndexOf(heads.Min())}{tails.IndexOf(tails.Min())}";
-            lblNumDown.Text = $"{heads.IndexOf(heads.Max())}{tails.IndexOf(tails.Max())}";
+            lblRslt.Text = cpl;
+            lblNumUp.Text = $"{numHeads.IndexOf(numHeads.Min())}{numTails.IndexOf(numTails.Min())}";
+        ChkPtDown:
+            var cplDown = $"{numHeads.IndexOf(numHeads.Max())}{numTails.IndexOf(numTails.Max())}";
+            if (cpls.Contains(cplDown))
+            {
+                if (numHeads.Max() > numTails.Max())
+                {
+                    numHeads.Remove(numHeads.Max());
+                }
+                else
+                {
+                    numTails.Remove(numTails.Max());
+                }
+                goto ChkPtDown;
+            }
+            lblNumDown.Text = cplDown;
         }
         #endregion
     }

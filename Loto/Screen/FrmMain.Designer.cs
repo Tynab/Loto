@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmMain));
             this.yanBtn1 = new YANF.Control.YANBtn();
             this.yanBtn2 = new YANF.Control.YANBtn();
             this.yanBtn3 = new YANF.Control.YANBtn();
@@ -61,7 +62,7 @@
             this.nb7 = new YANF.Control.YANNb();
             this.nb8 = new YANF.Control.YANNb();
             this.nb9 = new YANF.Control.YANNb();
-            this.btnRun = new YANF.Control.YANBtn();
+            this.btnGes = new YANF.Control.YANBtn();
             this.lblNumDown = new System.Windows.Forms.Label();
             this.lblArDown = new System.Windows.Forms.Label();
             this.lblNumUp = new System.Windows.Forms.Label();
@@ -1074,23 +1075,24 @@
             0,
             0});
             // 
-            // btnRun
+            // btnGes
             // 
-            this.btnRun.BackColor = System.Drawing.Color.MediumSlateBlue;
-            this.btnRun.BorderColor = System.Drawing.Color.PaleVioletRed;
-            this.btnRun.BorderRadius = 20;
-            this.btnRun.BorderSize = 0;
-            this.btnRun.FlatAppearance.BorderSize = 0;
-            this.btnRun.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnRun.Font = new System.Drawing.Font("Verdana", 10F, System.Drawing.FontStyle.Bold);
-            this.btnRun.ForeColor = System.Drawing.Color.White;
-            this.btnRun.Location = new System.Drawing.Point(300, 490);
-            this.btnRun.Name = "btnRun";
-            this.btnRun.Size = new System.Drawing.Size(150, 40);
-            this.btnRun.TabIndex = 0;
-            this.btnRun.Text = "Dự Đoán";
-            this.btnRun.UseVisualStyleBackColor = false;
-            this.btnRun.Click += new System.EventHandler(this.BtnRun_Click);
+            this.btnGes.BackColor = System.Drawing.Color.MediumSlateBlue;
+            this.btnGes.BorderColor = System.Drawing.Color.PaleVioletRed;
+            this.btnGes.BorderRadius = 20;
+            this.btnGes.BorderSize = 0;
+            this.btnGes.FlatAppearance.BorderSize = 0;
+            this.btnGes.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnGes.Font = new System.Drawing.Font("Verdana", 10F, System.Drawing.FontStyle.Bold);
+            this.btnGes.ForeColor = System.Drawing.Color.White;
+            this.btnGes.Location = new System.Drawing.Point(300, 490);
+            this.btnGes.Name = "btnGes";
+            this.btnGes.Size = new System.Drawing.Size(150, 40);
+            this.btnGes.TabIndex = 0;
+            this.btnGes.TabStop = false;
+            this.btnGes.Text = "Dự Đoán";
+            this.btnGes.UseVisualStyleBackColor = false;
+            this.btnGes.Click += new System.EventHandler(this.BtnGes_Click);
             // 
             // lblNumDown
             // 
@@ -1145,7 +1147,7 @@
             this.Controls.Add(this.lblArDown);
             this.Controls.Add(this.lblNumUp);
             this.Controls.Add(this.lblNumDown);
-            this.Controls.Add(this.btnRun);
+            this.Controls.Add(this.btnGes);
             this.Controls.Add(this.nb9);
             this.Controls.Add(this.nb109);
             this.Controls.Add(this.nb8);
@@ -1181,6 +1183,7 @@
             this.Controls.Add(this.yanBtn1);
             this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "FrmMain";
@@ -1227,7 +1230,7 @@
         private YANF.Control.YANNb nb7;
         private YANF.Control.YANNb nb8;
         private YANF.Control.YANNb nb9;
-        private YANF.Control.YANBtn btnRun;
+        private YANF.Control.YANBtn btnGes;
         private System.Windows.Forms.Label lblNumDown;
         private System.Windows.Forms.Label lblArDown;
         private System.Windows.Forms.Label lblNumUp;
