@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using YANF.Script;
+using static Loto.Script.Common;
 using static Loto.Script.Constant;
 
 namespace Loto.Screen
@@ -35,32 +36,40 @@ namespace Loto.Screen
             // num up-down head
             var numHeads = new List<int>();
             _nbHeads.ForEach(x => numHeads.Add((int)x.Value));
+            var sumHead = numHeads.Sum();
+            numHeads.ForEach(x => x = sumHead - x);
+            var gcdhead = GCD(numHeads.ToArray());
+            numHeads.ForEach(x => x /= gcdhead);
             // num up-down tail
             var numTails = new List<int>();
             _nbTails.ForEach(x => numTails.Add((int)x.Value));
+            var sumTails = numTails.Sum();
+            numTails.ForEach(x => x = sumTails - x);
+            var gcdTail = GCD(numTails.ToArray());
+            numTails.ForEach((x) => x /= gcdTail);
             // random head size
             var heads = new List<int>();
-            var sum = 0;
+            var rngHead = 0;
             numHeads.ForEach(x =>
             {
-                sum += x;
-                heads.Add(sum);
+                rngHead += x;
+                heads.Add(rngHead);
             });
             // random tail size
             var tails = new List<int>();
-            sum = 0;
+            var rngTail = 0;
             numTails.ForEach(x =>
             {
-                sum += x;
-                tails.Add(sum);
+                rngTail += x;
+                tails.Add(rngTail);
             });
             // spin
             var cpls = new List<string>();
             for (var i = 0; i < RND_SIZE; i++)
             {
-                var numHead = heads.IndexOf(heads.First(x => x > rnd.Next(sum)));
+                var numHead = heads.IndexOf(heads.First(x => x > rnd.Next(rngHead)));
                 numHeads[numHead] = numHeads[numHead]++;
-                var numTail = tails.IndexOf(tails.First(x => x > rnd.Next(sum)));
+                var numTail = tails.IndexOf(tails.First(x => x > rnd.Next(rngTail)));
                 numTails[numTail] = numTails[numTail]++;
                 cpls.Add($"{numHead}{numTail}");
             }
@@ -74,9 +83,9 @@ namespace Loto.Screen
             else
             {
             ChkPtGes:
-                var numHead = heads.IndexOf(heads.First(x => x > rnd.Next(sum)));
+                var numHead = heads.IndexOf(heads.First(x => x > rnd.Next(rngHead)));
                 numHeads[numHead] = numHeads[numHead]++;
-                var numTail = tails.IndexOf(tails.First(x => x > rnd.Next(sum)));
+                var numTail = tails.IndexOf(tails.First(x => x > rnd.Next(rngTail)));
                 numTails[numTail] = numTails[numTail]++;
                 cpl = $"{numHead}{numTail}";
                 if (!cpls.Contains(cpl))
