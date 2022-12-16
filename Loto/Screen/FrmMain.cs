@@ -5,11 +5,13 @@ using System.Windows.Forms;
 using YANF.Script;
 using static Loto.Script.Common;
 using static Loto.Script.Constant;
+using static System.Threading.Tasks.Task;
 
 namespace Loto.Screen
 {
     public partial class FrmMain : Form
     {
+        private readonly Random _rnd = new();
         #region Constructors
         public FrmMain()
         {
@@ -32,45 +34,16 @@ namespace Loto.Screen
         // btn guess click
         private void BtnGes_Click(object sender, EventArgs e)
         {
-            var rnd = new Random();
-            // num up-down head
+            // trans data from ctrl
             var numHeads = new List<int>();
             _nbHeads.ForEach(x => numHeads.Add((int)x.Value));
-            var sumHead = numHeads.Sum();
-            numHeads.ForEach(x => x = sumHead - x);
-            var gcdhead = GCD(numHeads.ToArray());
-            numHeads.ForEach(x => x /= gcdhead);
-            // num up-down tail
             var numTails = new List<int>();
             _nbTails.ForEach(x => numTails.Add((int)x.Value));
-            var sumTails = numTails.Sum();
-            numTails.ForEach(x => x = sumTails - x);
-            var gcdTail = GCD(numTails.ToArray());
-            numTails.ForEach((x) => x /= gcdTail);
-            // random head size
-            var heads = new List<int>();
-            var rngHead = 0;
-            numHeads.ForEach(x =>
-            {
-                rngHead += x;
-                heads.Add(rngHead);
-            });
-            // random tail size
-            var tails = new List<int>();
-            var rngTail = 0;
-            numTails.ForEach(x =>
-            {
-                rngTail += x;
-                tails.Add(rngTail);
-            });
             // spin
             var cpls = new List<string>();
             for (var i = 0; i < RND_SIZE; i++)
             {
-                var numHead = heads.IndexOf(heads.First(x => x > rnd.Next(rngHead)));
-                numHeads[numHead] = numHeads[numHead]++;
-                var numTail = tails.IndexOf(tails.First(x => x > rnd.Next(rngTail)));
-                numTails[numTail] = numTails[numTail]++;
+                SpinWiz(numHeads, numTails, out var numHead, out var numTail);
                 cpls.Add($"{numHead}{numTail}");
             }
             // get top
@@ -83,10 +56,7 @@ namespace Loto.Screen
             else
             {
             ChkPtGes:
-                var numHead = heads.IndexOf(heads.First(x => x > rnd.Next(rngHead)));
-                numHeads[numHead] = numHeads[numHead]++;
-                var numTail = tails.IndexOf(tails.First(x => x > rnd.Next(rngTail)));
-                numTails[numTail] = numTails[numTail]++;
+                SpinWiz(numHeads, numTails, out var numHead, out var numTail);
                 cpl = $"{numHead}{numTail}";
                 if (!cpls.Contains(cpl))
                 {
@@ -113,6 +83,54 @@ namespace Loto.Screen
                 goto ChkPtDown;
             }
             lblNumDown.Text = cplDown;
+        }
+        #endregion
+
+        #region Methods
+        // Convert list
+        private List<int> CnvtList(List<int> nums)
+        {
+            var sum = nums.Sum();
+            var rvNums = new List<int>();
+            nums.ForEach(x => rvNums.Add(sum - x));
+            var gcdhead = GCD(rvNums.ToArray());
+            var rslts = new List<int>();
+            rvNums.ForEach(x => rslts.Add(x / gcdhead));
+            return rslts;
+        }
+
+        // Refresh list
+        private List<int> RefreshList(List<int> nums, out int rng)
+        {
+            var cmpcts = CnvtList(nums);
+            var rngs = new List<int>();
+            rng = 0;
+            foreach (var cmpct in cmpcts)
+            {
+                rng += cmpct;
+                rngs.Add(rng);
+            }
+            return rngs;
+        }
+
+        // Spin access
+        private void Spin(List<int> numHeads, List<int> numTails, List<int> heads, List<int> tails, int rngHead, int rngTail, out int numHead, out int numTail)
+        {
+            numHead = heads.IndexOf(heads.First(x => x > _rnd.Next(rngHead)));
+            numHeads[numHead] = numHeads[numHead] + 1;
+            numTail = tails.IndexOf(tails.First(x => x > _rnd.Next(rngTail)));
+            numTails[numTail] = numTails[numTail] + 1;
+        }
+
+        // Spin wizard
+        private void SpinWiz(List<int> numHeads, List<int> numTails, out int numHead, out int numTail)
+        {
+            var rngHead = 0;
+            var rngTail = 0;
+            var taskHead = Run(() => RefreshList(numHeads, out rngHead));
+            var taskTail = Run(() => RefreshList(numTails, out rngTail));
+            WaitAll(taskHead, taskTail);
+            Spin(numHeads, numTails, taskHead.Result, taskTail.Result, rngHead, rngTail, out numHead, out numTail);
         }
         #endregion
     }
