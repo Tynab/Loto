@@ -41,14 +41,10 @@ namespace Loto.Screen
             var arr = rtxData.Text.Split('\n');
             for (var i = 0; i < arr.Length; i++)
             {
-                var strHead = arr[i].Split('\t')[0].Split(' ')[0];
-                var strHeadCon = arr[i].Split('\t')[1];
-                var strTail = arr[i].Split('\t')[4].Split(' ')[0];
-                var strTailCon = arr[i].Split('\t')[5];
-                _nbHeads[i].Value = decimal.TryParse(strHead, out var head) ? head : 1;
-                _nbHeadCons[i].Value = decimal.TryParse(strHeadCon, out var headCon) ? headCon : 0;
-                _nbTails[i].Value = decimal.TryParse(strTail, out var tail) ? tail : 1;
-                _nbTailCons[i].Value = decimal.TryParse(strTailCon, out var tailCon) ? tailCon : 0;
+                _nbHeads[i].Value = decimal.TryParse(arr[i].Split('\t')[0].Split(' ')[0], out var head) ? head : 1;
+                _nbHeadCons[i].Value = decimal.TryParse(arr[i].Split('\t')[1], out var headCon) ? headCon : 0;
+                _nbTails[i].Value = decimal.TryParse(arr[i].Split('\t')[4].Split(' ')[0], out var tail) ? tail : 1;
+                _nbTailCons[i].Value = decimal.TryParse(arr[i].Split('\t')[5], out var tailCon) ? tailCon : 0;
             }
         }
 
@@ -117,7 +113,14 @@ namespace Loto.Screen
                 {
                     numTailDowns.Remove(numTailDowns.Max());
                 }
-                goto ChkPtDown;
+                if (numHeadDowns.Count == 0 || numTailDowns.Count == 0)
+                {
+                    BtnGes_Click(sender, new EventArgs());
+                }
+                else
+                {
+                    goto ChkPtDown;
+                }
             }
             lblNumDown.Text = cplDown;
         }
